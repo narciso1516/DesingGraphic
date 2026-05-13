@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketing Advisor Extension · QA Knowledge Hub</title>
+
+  <!-- Mermaid for flow diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      themeVariables: {
+        primaryColor: "#EAF3FF",
+        primaryTextColor: "#172033",
+        primaryBorderColor: "#4C7DFF",
+        lineColor: "#5B6475",
+        secondaryColor: "#FFF7E8",
+        tertiaryColor: "#F6F8FB",
+        fontFamily: "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+      }
+    });
+  </script>
+
+  <style>
+    :root {
+      --bg-main: #f4f7fb;
+      --bg-card: rgba(255, 255, 255, 0.88);
+      --bg-soft: #eef4ff;
+      --bg-dark: #111827;
+      --blue: #2f6bff;
+      --blue-soft: #dce8ff;
+      --cyan: #13b6d6;
+      --orange: #ffb347;
+      --green: #2fbf71;
+      --red: #e74c3c;
+      --purple: #805ad5;
+      --text-main: #172033;
+      --text-soft: #5b6475;
+      --border: #dde5f2;
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at top left, rgba(47, 107, 255, 0.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(255, 179, 71, 0.22), transparent 30%),
+        linear-gradient(135deg, #f7f9fc 0%, #eef3fa 48%, #f8fbff 100%);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 70px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      padding: 42px;
+      background:
+        linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(26, 37, 64, 0.94)),
+        radial-gradient(circle at 80% 20%, rgba(47, 107, 255, 0.55), transparent 40%);
+      color: white;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -80px -80px auto auto;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(19, 182, 214, 0.45), transparent 68%);
+      filter: blur(10px);
+    }
+
+    .hero::after {
+      content: "QA";
+      position: absolute;
+      right: 34px;
+      bottom: -38px;
+      font-weight: 900;
+      font-size: 180px;
+      letter-spacing: -10px;
+      color: rgba(255, 255, 255, 0.045);
+      line-height: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: #cfe2ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(47,191,113,0.15);
+    }
+
+    h1 {
+      font-size: clamp(34px, 6vw, 72px);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      margin-bottom: 20px;
+      max-width: 820px;
+    }
+
+    .hero-lead {
+      max-width: 760px;
+      color: #dbe6ff;
+      font-size: 18px;
+    }
+
+    .hero-panel {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.09);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .hero-panel h2 {
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #aecaee;
+      margin-bottom: 16px;
+    }
+
+    .signal-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .signal {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .signal strong {
+      display: block;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    .signal span {
+      display: block;
+      color: #c8d5eb;
+      font-size: 13px;
+    }
+
+    .icon-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(47, 107, 255, 0.24);
+      color: #ffffff;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .nav-strip {
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(221, 229, 242, 0.9);
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(18px);
+      border-radius: 999px;
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    .nav-strip a {
+      text-decoration: none;
+      color: var(--text-main);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .nav-strip a:hover {
+      background: var(--bg-dark);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(221, 229, 242, 0.95);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-title .marker {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: white;
+      font-weight: 900;
+      box-shadow: 0 12px 24px rgba(47,107,255,0.25);
+    }
+
+    h2 {
+      font-size: 28px;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      color: var(--text-soft);
+      margin-bottom: 12px;
+    }
+
+    .callout {
+      border-left: 5px solid var(--blue);
+      background: linear-gradient(90deg, var(--blue-soft), rgba(255,255,255,0.65));
+      border-radius: 18px;
+      padding: 18px 20px;
+      color: var(--text-main);
+      margin: 18px 0;
+    }
+
+    .callout strong {
+      color: #0f3c99;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      padding: 8px 11px;
+      background: #f3f6fb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #31415f;
+    }
+
+    .qa-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .qa-list li {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(246, 248, 251, 0.72);
+    }
+
+    .qa-list b {
+      color: var(--text-main);
+    }
+
+    .num {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--bg-dark);
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: white;
+      margin-top: 14px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #111827;
+      color: white;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td:first-child {
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .risk {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 9px;
+      border-radius: 999px;
+    }
+
+    .risk.high {
+      background: #ffe8e4;
+      color: #a82518;
+    }
+
+    .risk.medium {
+      background: #fff1d6;
+      color: #8a5800;
+    }
+
+    .risk.low {
+      background: #e8fff2;
+      color: #137a42;
+    }
+
+    .flow-card {
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      min-width: 720px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      margin-top: 14px;
+    }
+
+    .code-block {
+      position: relative;
+      background: #0d1321;
+      color: #d7e3ff;
+      border-radius: 20px;
+      padding: 22px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.65;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+
+    .code-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: #9fb6e8;
+      text-transform: uppercase;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .status {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .status b {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .status.pass {
+      border-top: 5px solid var(--green);
+    }
+
+    .status.fail {
+      border-top: 5px solid var(--red);
+    }
+
+    .status.blocked {
+      border-top: 5px solid var(--orange);
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding: 22px;
+      text-align: center;
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        padding: 30px;
+      }
+
+      .hero-content,
+      .two-col,
+      .three-col,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-strip {
+        border-radius: 24px;
+      }
+
+      .nav-strip a {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+
+      .card {
+        padding: 22px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .nav-strip {
+        display: none;
+      }
+
+      .card,
+      .hero {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page-shell">
+    <header class="hero">
+      <div class="hero-content">
+        <section>
+          <div class="eyebrow"><span class="dot"></span> QA Knowledge Hub · Sanitized</div>
+          <h1>Marketing Advisor Extension</h1>
+          <p class="hero-lead">
+            Documento profesional para explicar el funcionamiento general de la extensión desde una perspectiva QA Senior,
+            con enfoque en validación funcional, trazabilidad, riesgos, evidencia y criterios de aceptación.
+          </p>
+          <div class="pill-row">
+            <span class="pill">QA Strategy</span>
+            <span class="pill">Extension Testing</span>
+            <span class="pill">Evidence-Based Validation</span>
+            <span class="pill">Compliance-Safe</span>
+          </div>
+        </section>
+
+        <aside class="hero-panel">
+          <h2>Lectura senior</h2>
+          <div class="signal-list">
+            <div class="signal">
+              <div class="icon-badge">01</div>
+              <div>
+                <strong>Contexto controlado</strong>
+                <span>La extensión interpreta información permitida del flujo activo.</span>
+              </div>
+            </div>
+            <div class="signal">
+              <div class="icon-badge">02</div>
+              <div>
+                <strong>Recomendación guiada</strong>
+                <span>El sistema entrega orientación contextual al usuario final.</span>
+              </div>
+            </div>
+            <div class="signal">
+              <div class="icon-badge">03</div>
+              <div>
+                <strong>Validación QA</strong>
+                <span>Se revisa carga, respuesta, precisión, errores y evidencia.</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <nav class="nav-strip">
+      <a href="#overview">Overview</a>
+      <a href="#flow">Flujo</a>
+      <a href="#components">Componentes</a>
+      <a href="#qa">Validación QA</a>
+      <a href="#risks">Riesgos</a>
+      <a href="#report">Reporte</a>
+      <a href="#daily">Daily</a>
+    </nav>
+
+    <section id="overview" class="section card">
+      <div class="section-title">
+        <div class="marker">A</div>
+        <h2>Descripción funcional</h2>
+      </div>
+
+      <p>
+        La extensión de <strong>Marketing Advisor</strong> funciona como una capa de asistencia dentro de un flujo de marketing
+        o publicidad. Su propósito es ayudar al usuario a recibir guía, recomendaciones o soporte contextual mientras trabaja
+        con configuraciones, diagnósticos, campañas o revisión de elementos relacionados con marketing.
+      </p>
+
+      <div class="callout">
+        <strong>Definición segura:</strong> Marketing Advisor actúa como un asistente integrado que interpreta el contexto
+        permitido del usuario, procesa la solicitud mediante un servicio interno y devuelve recomendaciones, pasos o acciones
+        guiadas dentro de un entorno controlado.
+      </div>
+
+      <p>
+        Desde QA, esta extensión debe evaluarse no solo por su funcionamiento visual, sino también por su capacidad para
+        responder de manera coherente, trazable, reproducible y alineada con criterios de seguridad y cumplimiento.
+      </p>
+    </section>
+
+    <section id="flow" class="section card flow-card">
+      <div class="section-title">
+        <div class="marker">B</div>
+        <h2>Flujo general esperado</h2>
+      </div>
+
+      <p>
+        El siguiente flujo representa una abstracción segura del comportamiento esperado, sin exponer rutas, nombres internos
+        ni detalles privados de implementación.
+      </p>
+
+      <div class="mermaid">
+        flowchart TD
+          A[Usuario abre la extensión] --> B[Extensión detecta contexto permitido]
+          B --> C[Usuario realiza consulta o acción]
+          C --> D[Servicio interno procesa la solicitud]
+          D --> E[Marketing Advisor genera respuesta o recomendación]
+          E --> F[Usuario revisa la sugerencia]
+          F --> G{¿La respuesta resuelve el flujo?}
+          G -->|Sí| H[Usuario aplica, confirma o continúa]
+          G -->|No| I[Se documenta evidencia y posible escalamiento]
+      </div>
+    </section>
+
+    <section id="components" class="section card">
+      <div class="section-title">
+        <div class="marker">C</div>
+        <h2>Componentes funcionales principales</h2>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Función general</th>
+            <th>Observación QA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Extensión / UI</td>
+            <td>Interfaz donde el usuario interactúa con Marketing Advisor.</td>
+            <td>Validar carga, visibilidad, estados, botones, mensajes y consistencia visual.</td>
+          </tr>
+          <tr>
+            <td>Contexto de página</td>
+            <td>Información visible o permitida del entorno donde se usa la extensión.</td>
+            <td>Confirmar que la respuesta corresponda al flujo activo y no a información ajena.</td>
+          </tr>
+          <tr>
+            <td>Motor de recomendación</td>
+            <td>Procesa la solicitud y genera una respuesta guiada.</td>
+            <td>Evaluar precisión, coherencia, completitud y ausencia de afirmaciones no verificables.</td>
+          </tr>
+          <tr>
+            <td>Servicio interno</td>
+            <td>Sistema backend que valida, consulta o genera información.</td>
+            <td>Observar errores, latencia, permisos y manejo de respuestas fallidas.</td>
+          </tr>
+          <tr>
+            <td>Evidencia QA</td>
+            <td>Capturas, logs genéricos, pasos, resultados observados y referencias no sensibles.</td>
+            <td>La evidencia debe permitir reproducibilidad sin exponer datos privados.</td>
+          </tr>
+          <tr>
+            <td>Escalamiento</td>
+            <td>Ruta de soporte cuando la extensión no puede resolver el flujo.</td>
+            <td>Validar si el fallback es claro, útil y accionable para el usuario.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="qa" class="section grid two-col">
+      <article class="card">
+        <div class="section-title">
+          <div class="marker">D</div>
+          <h2>Qué se valida desde QA</h2>
+        </div>
+
+        <ul class="qa-list">
+          <li>
+            <div class="num">1</div>
+            <div>
+              <b>Carga de la extensión</b>
+              <p>Debe abrir correctamente, evitar estados infinitos de loading y mostrar elementos esperados.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">2</div>
+            <div>
+              <b>Entrada del usuario</b>
+              <p>Debe aceptar consultas válidas y manejar entradas incompletas, ambiguas o inválidas.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">3</div>
+            <div>
+              <b>Respuesta del sistema</b>
+              <p>Debe entregar recomendaciones coherentes, verificables y alineadas al contexto permitido.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">4</div>
+            <div>
+              <b>Integración con servicios internos</b>
+              <p>Debe manejar comunicación, errores, permisos y estados de indisponibilidad de forma controlada.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">5</div>
+            <div>
+              <b>Flujos críticos</b>
+              <p>Incluye autenticación, uso dentro de flujo activo, recomendaciones, rechazo, aplicación y escalamiento.</p>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="section-title">
+          <div class="marker">E</div>
+          <h2>Criterios de salida</h2>
+        </div>
+
+        <p>
+          Para considerar estable un ciclo de validación, la extensión debe cumplir con criterios mínimos de calidad funcional,
+          trazabilidad y seguridad.
+        </p>
+
+        <div class="status-grid">
+          <div class="status pass">
+            <b>PASS</b>
+            <p>El resultado coincide con lo esperado y no se detectan desviaciones relevantes.</p>
+          </div>
+          <div class="status fail">
+            <b>FAIL</b>
+            <p>El comportamiento rompe el flujo, entrega información incorrecta o incumple criterios.</p>
+          </div>
+          <div class="status blocked">
+            <b>BLOCKED</b>
+            <p>No es posible continuar por falta de acceso, datos, ambiente, permisos o dependencia externa.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Regla QA:</strong> Ningún resultado debe marcarse como Pass si no existe evidencia suficiente para justificar
+          la ejecución, el comportamiento observado y la comparación contra el resultado esperado.
+        </div>
+      </article>
+    </section>
+
+    <section id="risks" class="section card">
+      <div class="section-title">
+        <div class="marker">F</div>
+        <h2>Riesgos importantes</h2>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Riesgo</th>
+            <th>Nivel sugerido</th>
+            <th>Qué se debe observar</th>
+            <th>Acción QA recomendada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Respuesta incorrecta</td>
+            <td><span class="risk high">Alta prioridad</span></td>
+            <td>La extensión recomienda una acción no válida o no alineada al flujo.</td>
+            <td>Documentar prompt/acción, resultado actual, esperado y evidencia visual.</td>
+          </tr>
+          <tr>
+            <td>Alucinación</td>
+            <td><span class="risk high">Alta prioridad</span></td>
+            <td>El sistema afirma datos que no están disponibles o no pueden verificarse.</td>
+            <td>Comparar contra contexto visible y marcar como defecto de precisión.</td>
+          </tr>
+          <tr>
+            <td>Fuga de datos</td>
+            <td><span class="risk high">Alta prioridad</span></td>
+            <td>Se muestran datos internos, privados o no autorizados.</td>
+            <td>Escalar con evidencia sanitizada y evitar compartir información sensible.</td>
+          </tr>
+          <tr>
+            <td>Error de contexto</td>
+            <td><span class="risk medium">Prioridad media</span></td>
+            <td>La respuesta corresponde a otra cuenta, campaña, pantalla o flujo.</td>
+            <td>Registrar el contexto permitido y la discrepancia observada.</td>
+          </tr>
+          <tr>
+            <td>Falla de UI</td>
+            <td><span class="risk medium">Prioridad media</span></td>
+            <td>Botones, paneles, mensajes o estados no cargan correctamente.</td>
+            <td>Capturar pasos, navegador, ambiente genérico y resultado visual.</td>
+          </tr>
+          <tr>
+            <td>Falta de trazabilidad</td>
+            <td><span class="risk low">Preventivo</span></td>
+            <td>No hay evidencia suficiente para reproducir el problema.</td>
+            <td>Completar pasos, datos genéricos, hora aproximada y resultado observado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="report" class="section grid two-col">
+      <article class="card">
+        <div class="section-title">
+          <div class="marker">G</div>
+          <h2>Plantilla de reporte QA</h2>
+        </div>
+
+        <p>
+          Este formato puede usarse para reportar un comportamiento observado de forma profesional, clara y segura.
+        </p>
+
+        <div class="code-block"><span class="code-label">QA Report Template</span>
+Scenario:
+The Marketing Advisor extension was opened within the expected internal workflow.
+
+Action performed:
+A user query or action was submitted through the extension interface.
+
+Expected result:
+The extension should process the request, identify the correct permitted context,
+and return a relevant, compliant and actionable recommendation.
+
+Actual result:
+[Describe the observed behavior without exposing private information.]
+
+Evidence:
+- Screenshot attached.
+- Console or log evidence if available.
+- Generic session/reference ID if applicable.
+- Steps to reproduce.
+
+QA assessment:
+The behavior is classified as [Pass / Fail / Blocked] based on the expected result
+and the defined acceptance criteria.</div>
+      </article>
+
+      <article class="card">
+        <div class="section-title">
+          <div class="marker">H</div>
+          <h2>Checklist de ejecución</h2>
+        </div>
+
+        <ul class="qa-list">
+          <li>
+            <div class="num">✓</div>
+            <div>
+              <b>Preparación</b>
+              <p>Confirmar ambiente, usuario de prueba, flujo permitido y precondiciones.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">✓</div>
+            <div>
+              <b>Ejecución</b>
+              <p>Realizar la acción o consulta exacta y observar respuesta, UI y comportamiento técnico.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">✓</div>
+            <div>
+              <b>Comparación</b>
+              <p>Contrastar resultado actual contra resultado esperado y criterios de aceptación.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">✓</div>
+            <div>
+              <b>Evidencia</b>
+              <p>Adjuntar capturas o logs sanitizados suficientes para reproducibilidad.</p>
+            </div>
+          </li>
+          <li>
+            <div class="num">✓</div>
+            <div>
+              <b>Cierre</b>
+              <p>Clasificar como Pass, Fail o Blocked y agregar notas de riesgo si aplica.</p>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="daily" class="section card">
+      <div class="section-title">
+        <div class="marker">I</div>
+        <h2>Mensajes listos para daily</h2>
+      </div>
+
+      <div class="grid two-col">
+        <div>
+          <h3>English version</h3>
+          <div class="code-block">Today I worked on validating the Marketing Advisor extension behavior.
+I reviewed how the extension loads, how it handles user input, and whether the generated response matches the expected workflow.
+I also checked potential risks related to context accuracy, UI behavior, compliance and evidence collection for reproducibility.</div>
+        </div>
+
+        <div>
+          <h3>Versión en español</h3>
+          <div class="code-block">Hoy estuve validando el comportamiento de la extensión de Marketing Advisor.
+Revisé que cargue correctamente, que procese la entrada del usuario y que la respuesta sea consistente con el flujo esperado.
+También observé posibles riesgos relacionados con precisión del contexto, comportamiento de UI, compliance y evidencia para reproducibilidad.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <div class="section-title">
+        <div class="marker">J</div>
+        <h2>Conclusión QA Senior</h2>
+      </div>
+
+      <p>
+        La validación de una extensión como Marketing Advisor requiere observar más que la interfaz. El valor QA está en confirmar
+        que el sistema entienda el contexto correcto, responda con precisión, maneje errores de forma segura y permita documentar
+        evidencia suficiente para reproducir cualquier desviación.
+      </p>
+
+      <div class="callout">
+        <strong>Principio clave:</strong> Una respuesta visualmente correcta no siempre significa que el flujo esté aprobado.
+        El criterio senior debe evaluar precisión, trazabilidad, seguridad, cumplimiento y experiencia del usuario.
+      </div>
+    </section>
+
+    <footer class="footer">
+      QA Knowledge Hub · Documento sanitizado para uso organizativo y documentación interna segura.
+    </footer>
+  </main>
+</body>
+</html>
